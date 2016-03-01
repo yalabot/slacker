@@ -12,13 +12,14 @@ defmodule Slacker do
 
       @before_compile unquote(__MODULE__)
 
-      def start_link(api_token, options \\ []) do
-        GenServer.start_link(__MODULE__, api_token, options)
+      def start_link(slacker_options, options \\ []) do
+        GenServer.start_link(__MODULE__, slacker_options, options)
       end
 
-      def init(api_token) do
+      def init(options) do
+        state = options[:state]
         GenServer.cast(self, :connect)
-        {:ok, %State{api_token: api_token}}
+        {:ok, %State{api_token: options.api_token, state: state}}
       end
 
       def say(slacker, channel, message) do
