@@ -46,7 +46,9 @@ defmodule Slacker do
   defmacro __before_compile__(_env) do
     quote do
       def handle_cast({:handle_incoming, type, msg}, state) do
-        Logger.debug "#{type} -> #{inspect msg}"
+        if Application.get_env(:slacker, :log_unhandled_events, true) do
+          Logger.debug "#{type} -> #{inspect msg}"
+        end
         {:noreply, state}
       end
     end
