@@ -27,13 +27,20 @@ defmodule Slacker do
       end
 
       def handle_cast(:connect, state) do
-        {:ok, auth} = Web.auth_test(state.api_token)
-        Logger.info(~s/Successfully authenticated as user "#{auth.user}" on team "#{auth.team}"/)
+        case Web.auth_test(state.api_token) do
+          {:ok, auth} ->
+            Logger.info(~s/Successfully authenticated as user "#{auth.user}" on team "#{auth.team}"/)
 
-        {:ok, rtm_response} = Web.rtm_start(state.api_token)
-        {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
+            {:ok, rtm_response} = Web.rtm_start(state.api_token)
+            {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
 
-        {:noreply, %{state | rtm: rtm}}
+            {:noreply, %{state | rtm: rtm}}
+          {:error, api_response} ->
+            Logger.error("Authentication with the Slack API failed with token #{state.api_token}")
+            Logger.error("Error message: #{api_response.body.error}")
+
+            {:stop, {:shutdown, :auth_failed}, state}
+        end
       end
 
       def handle_cast({:send_message, channel, msg}, state) do
