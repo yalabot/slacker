@@ -1,4 +1,5 @@
 defmodule Slacker.WebAPI do
+  require Logger
   use HTTPoison.Base
 
   @url_base Application.get_env(:slacker, :url_base) || "https://slack.com/api/"
@@ -14,9 +15,17 @@ defmodule Slacker.WebAPI do
   end
 
   defp process_response_body(body) do
-    body
-    |> Poison.decode!
-    |> Enum.reduce(%{}, fn {k, v}, map -> Dict.put(map, String.to_atom(k), v) end)
+    try do
+      body
+      |> Poison.decode!
+      |> Enum.reduce(%{}, fn {k, v}, map -> Dict.put(map, String.to_atom(k), v) end)
+    rescue
+      x in [Poison.SyntaxError] ->
+        Logger.error(Exception.message(x))
+        Logger.error("body:")
+        Logger.error(inspect(body))
+        raise x
+    end
   end
 
   defp check_response({:ok, %{status_code: 200, body: %{ok: true} = body}}) do
