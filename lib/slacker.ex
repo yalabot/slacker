@@ -1,7 +1,7 @@
 defmodule Slacker do
 
   defmodule State do
-    defstruct api_token: nil, rtm: nil, state: nil
+    defstruct [:api_token, :rtm, :state, :rtm_response]
   end
 
   defmacro __using__(_opts) do
@@ -34,7 +34,7 @@ defmodule Slacker do
             {:ok, rtm_response} = Web.rtm_start(state.api_token)
             {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
 
-            {:noreply, %{state | rtm: rtm}}
+            {:noreply, %{state | rtm: rtm, rtm_response: rtm_response}}
           {:error, api_response} ->
             Logger.error("Authentication with the Slack API failed with token #{state.api_token}")
             Logger.error("Error message: #{api_response.body.error}")
