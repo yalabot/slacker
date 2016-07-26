@@ -1,7 +1,7 @@
 defmodule Slacker.Mixfile do
   use Mix.Project
 
-  @version "0.0.2"
+  @version "0.0.3"
 
   def project do
     [app: :slacker,
@@ -25,7 +25,7 @@ defmodule Slacker.Mixfile do
 
   defp deps(_env) do
     [{:websocket_client, github: "jeremyong/websocket_client"},
-     {:httpoison, "~> 0.6"},
+     {:httpoison, "~> 0.9"},
      {:poison, "~> 1.4"},
      {:inflex, "~> 1.0.0"}]
   end
