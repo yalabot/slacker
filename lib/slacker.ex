@@ -1,5 +1,4 @@
 defmodule Slacker do
-
   defmodule State do
     defstruct [:api_token, :rtm, :state, :rtm_response]
   end
@@ -36,10 +35,8 @@ defmodule Slacker do
 
             {:noreply, %{state | rtm: rtm, rtm_response: rtm_response}}
           {:error, api_response} ->
-            Logger.error("Authentication with the Slack API failed with token #{state.api_token}")
-            Logger.error("Error message: #{api_response.body.error}")
-
-            {:stop, {:shutdown, :auth_failed}, state}
+            GenServer.cast self, {:auth_error, api_response}
+            {:noreply, state}
         end
       end
 
@@ -57,6 +54,13 @@ defmodule Slacker do
           Logger.debug "#{type} -> #{inspect msg}"
         end
         {:noreply, state}
+      end
+
+      def handle_cast({:auth_error, api_response}, state) do
+        Logger.error("Authentication with the Slack API failed.")
+        Logger.error("Error message: #{api_response.body.error}")
+
+        {:stop, {:shutdown, :auth_error}, state}
       end
     end
   end
