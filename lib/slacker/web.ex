@@ -79,8 +79,13 @@ defmodule Slacker.Web do
 
   Enum.each(@methods, fn(api_method) ->
     method = api_method |> String.replace(".", "_") |> Inflex.underscore
+    method_name = String.to_atom method
 
-    def unquote(String.to_atom method)(api_token, params \\ []) do
+    def unquote(method_name)(api_token, params \\ [])
+    def unquote(method_name)(api_token, params) when is_map(params) do
+      unquote(method_name)(api_token, Keyword.new(params))
+    end
+    def unquote(method_name)(api_token, params) do
       body = params
       |> Keyword.put(:token, api_token)
 
