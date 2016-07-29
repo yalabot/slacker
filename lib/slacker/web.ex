@@ -83,7 +83,7 @@ defmodule Slacker.Web do
 
     def unquote(method_name)(api_token, params \\ [])
     def unquote(method_name)(api_token, params) when is_map(params) do
-      unquote(method_name)(api_token, Keyword.new(params))
+      unquote(method_name)(api_token, Map.to_list(params))
     end
     def unquote(method_name)(api_token, params) do
       body = params
