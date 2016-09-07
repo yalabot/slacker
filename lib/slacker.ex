@@ -25,6 +25,10 @@ defmodule Slacker do
         GenServer.cast(slacker, {:send_message, channel, message})
       end
 
+      def user_typing(slacker, channel) do
+        GenServer.cast(slacker, {:send_user_typing, channel})
+      end
+
       def handle_cast(:connect, state) do
         case Web.auth_test(state.api_token) do
           {:ok, auth} ->
@@ -42,6 +46,11 @@ defmodule Slacker do
 
       def handle_cast({:send_message, channel, msg}, state) do
         GenServer.cast(state.rtm, {:send_message, channel, msg})
+        {:noreply, state}
+      end
+
+      def handle_cast({:send_user_typing, channel}, state) do
+        GenServer.cast(state.rtm, {:send_user_typing, channel})
         {:noreply, state}
       end
     end
