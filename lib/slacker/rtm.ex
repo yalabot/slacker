@@ -35,7 +35,6 @@ defmodule Slacker.RTM do
     {:reply, {:text, reply}, state}
   end
   def websocket_info({_gen_type, {:send_user_typing, channel}}, _conn_state, state) do
-    IO.puts "Sending user typing"
     reply = %{
       id: 2,
       type: :typing,
