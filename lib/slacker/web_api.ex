@@ -24,7 +24,7 @@ defmodule Slacker.WebAPI do
         Logger.error(Exception.message(x))
         Logger.error("body:")
         Logger.error(inspect(body))
-        raise x
+        body
     end
   end
 

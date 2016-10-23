@@ -44,4 +44,12 @@ defmodule Slacker.WebTest do
 
     assert {:error, %{body: %{hi: "there"}, status_code: 404}} = response
   end
+
+  test "gives raw response when there's a JSON decoding error", %{server: server} do
+    TestServer.respond_with(server, {429, "You are sending too many requests. Please relax."})
+
+    response = Web.rtm_start("apitoken")
+
+    assert {:error, %{body: "You are sending too many requests. Please relax.", status_code: 429}} = response
+  end
 end

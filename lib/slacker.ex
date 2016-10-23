@@ -34,10 +34,15 @@ defmodule Slacker do
           {:ok, auth} ->
             Logger.info(~s/Successfully authenticated as user "#{auth.user}" on team "#{auth.team}"/)
 
-            {:ok, rtm_response} = Web.rtm_start(state.api_token)
-            {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
-
-            {:noreply, %{state | rtm: rtm, rtm_response: rtm_response}}
+            case Web.rtm_start(state.api_token) do
+              {:ok, rtm_response} ->
+                {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
+                state = %{state | rtm: rtm, rtm_response: rtm_response}
+                {:noreply, state}
+              {:error, rtm_response} ->
+                GenServer.cast self, {:rtm_start_error, rtm_response}
+                {:noreply, state}
+            end
           {:error, api_response} ->
             GenServer.cast self, {:auth_error, api_response}
             {:noreply, state}
@@ -67,9 +72,16 @@ defmodule Slacker do
 
       def handle_cast({:auth_error, api_response}, state) do
         Logger.error("Authentication with the Slack API failed.")
-        Logger.error("Error message: #{api_response.body.error}")
+        Logger.error("Response: #{inspect api_response}")
 
         {:stop, {:shutdown, :auth_error}, state}
+      end
+
+      def handle_cast({:rtm_start_error, api_response}, state) do
+        Logger.error("Slack RTM initiation failed.")
+        Logger.error("Response: #{inspect api_response}")
+
+        {:stop, {:shutdown, :rtm_start_error}, state}
       end
     end
   end
