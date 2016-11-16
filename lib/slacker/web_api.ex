@@ -4,9 +4,9 @@ defmodule Slacker.WebAPI do
 
   @url_base Application.get_env(:slacker, :url_base) || "https://slack.com/api/"
 
-  def post(path, body) do
+  def post(path, body, headers \\ [], hackney_opts \\ [ssl: [{:versions, [:'tlsv1.2']}]]) do
     path
-    |> super(body)
+    |> super(body, headers, hackney_opts)
     |> check_response
   end
 
