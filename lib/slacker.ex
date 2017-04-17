@@ -1,6 +1,6 @@
 defmodule Slacker do
   defmodule State do
-    defstruct [:api_token, :rtm, :state, :rtm_response]
+    defstruct [:api_token, :rtm, :state]
   end
 
   defmacro __using__(_opts) do
@@ -37,7 +37,7 @@ defmodule Slacker do
             case Web.rtm_start(state.api_token) do
               {:ok, rtm_response} ->
                 {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
-                state = %{state | rtm: rtm, rtm_response: rtm_response}
+                state = %{state | rtm: rtm}
                 {:noreply, state}
               {:error, rtm_response} ->
                 GenServer.cast self, {:rtm_start_error, rtm_response}
