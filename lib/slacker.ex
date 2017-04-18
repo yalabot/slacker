@@ -38,7 +38,7 @@ defmodule Slacker do
               {:ok, rtm_response} ->
                 {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
                 state = %{state | rtm: rtm}
-                {:noreply, state}
+                {:noreply, state, :hibernate}
               {:error, rtm_response} ->
                 GenServer.cast self, {:rtm_start_error, rtm_response}
                 {:noreply, state}
