@@ -12,11 +12,11 @@ defmodule Slacker.TestServer do
 
   def init(_) do
     Process.flag(:trap_exit, true)
-    {:ok, http} = HTTP.start(self)
+    {:ok, http} = HTTP.start(self())
     {:ok, %State{http_pid: http}}
   end
 
-  def respond_with(pid, response, test_pid \\ self) do
+  def respond_with(pid, response, test_pid \\ self()) do
     GenServer.call(pid, {:respond_with, response, test_pid})
   end
 

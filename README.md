@@ -13,7 +13,7 @@ Slacker can match regex or literal strings, then execute a given function (modul
 defmodule TARS do
   use Slacker
   use Slacker.Matcher
-  
+
   match ~r/Sense of humor\. New level setting: ([0-9]+)%/, :set_humor
   match "Great idea. A massive, sarcastic robot.", [CueLight, :turn_on]
 
@@ -34,7 +34,7 @@ defmodule CASE do
   use Slacker
 
   def handle_cast({:handle_incoming, "presence_change", msg}, state) do
-    say self, msg["channel"], "You're the man who brought us the probe?"
+    say self(), msg["channel"], "You're the man who brought us the probe?"
     {:noreply, state}
   end
 

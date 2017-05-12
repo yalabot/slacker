@@ -12,7 +12,7 @@ defmodule Slacker.Matcher do
 
       # some integrations don't provide a "text" field, ignore them
       def handle_cast({:handle_incoming, "message", %{"text" => _} = msg}, state) do
-        match!(self, msg)
+        match!(self(), msg)
         {:noreply, state}
       end
     end

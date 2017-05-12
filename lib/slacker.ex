@@ -17,7 +17,7 @@ defmodule Slacker do
 
       def init(options) do
         state = options[:state]
-        GenServer.cast(self, :connect)
+        GenServer.cast(self(), :connect)
         {:ok, %State{api_token: options.api_token, state: state}}
       end
 
@@ -36,15 +36,15 @@ defmodule Slacker do
 
             case Web.rtm_start(state.api_token) do
               {:ok, rtm_response} ->
-                {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self)
+                {:ok, rtm} = Slacker.RTM.start_link(rtm_response.url, self())
                 state = %{state | rtm: rtm}
                 {:noreply, state, :hibernate}
               {:error, rtm_response} ->
-                GenServer.cast self, {:rtm_start_error, rtm_response}
+                GenServer.cast self(), {:rtm_start_error, rtm_response}
                 {:noreply, state}
             end
           {:error, api_response} ->
-            GenServer.cast self, {:auth_error, api_response}
+            GenServer.cast self(), {:auth_error, api_response}
             {:noreply, state}
         end
       end

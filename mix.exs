@@ -11,7 +11,7 @@ defmodule Slacker.Mixfile do
      start_permanent: Mix.env == :prod,
      deps: deps(Mix.env),
      description: "A bot library for the Slack chat service.",
-     package: package]
+     package: package()]
   end
 
   def application do

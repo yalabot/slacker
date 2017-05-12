@@ -18,7 +18,7 @@ defmodule Slacker.WebAPI do
     try do
       body
       |> Poison.decode!
-      |> Enum.reduce(%{}, fn {k, v}, map -> Dict.put(map, String.to_atom(k), v) end)
+      |> Enum.reduce(%{}, fn {k, v}, map -> Map.put(map, String.to_atom(k), v) end)
     rescue
       x in [Poison.SyntaxError] ->
         Logger.error(Exception.message(x))
