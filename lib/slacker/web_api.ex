@@ -10,11 +10,11 @@ defmodule Slacker.WebAPI do
     |> check_response
   end
 
-  defp process_url(path) do
+  def process_url(path) do
     @url_base <> path
   end
 
-  defp process_response_body(body) do
+  def process_response_body(body) do
     try do
       body
       |> Poison.decode!
