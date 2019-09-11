@@ -19,14 +19,14 @@ defmodule Slacker.Mixfile do
   end
 
   defp deps(:test) do
-    [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 0.12"}] ++ deps(:prod)
+    [{:plug_cowboy, "~> 2.0"},
+     {:plug, "~> 1.8.0"}] ++ deps(:prod)
   end
 
   defp deps(_env) do
     [{:websocket_client, github: "jeremyong/websocket_client"},
-     {:httpoison, "~> 0.9"},
-     {:poison, "~> 1.4"},
+     {:httpoison, "~> 1.5.0"},
+     {:poison, "~> 3.1"},
      {:inflex, "~> 1.0.0"}]
   end
 
